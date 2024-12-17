@@ -1,0 +1,13 @@
+[Unit]
+Description=Flask Application
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/home/garlicbread/webserver_new
+ExecStart=/usr/bin/sudo /usr/bin/python3 /home/garlicbread/webserver_new/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

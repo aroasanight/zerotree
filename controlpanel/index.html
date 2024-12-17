@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Control v1.0</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- script linked after body section -->
+</head>
+<body>
+    <div class="container">
+        <h1>Tree Control</h1>
+        
+        <section>
+            <h2>Quick Controls</h2>
+            <button id="button-led-toggle" class="button-led-toggle">On/Off</button>
+            <button id="button-reload-service" class="button-reload-service">Reload Service</button>
+            <button id="button-reload-page">Refresh Data</button>
+        </section>
+        
+        <section>
+            <h2>Modes</h2>
+            <select id="dropdown-mode-select"></select>
+            <button id="button-mode-select">Set Mode</button>
+            <span id="text-mode-select" class="text-mode-select">Loading...</span>
+        </section>
+        
+        <section>
+            <h2>Brightness</h2>
+            <input type="range" id="slider-brightness" min="1" max="100" value="35">
+            <span id="text-brightness" class="text-brightness">35%</span>
+        </section>
+        
+        <section>
+            <h2>Sleep Mode</h2>
+            
+            <h3>Weekdays (Monday - Friday)</h3>
+            <label for="time-sleep-weekdays-start">Start Time:</label>
+            <input type="time" id="time-sleep-weekdays-start">
+            <label for="time-sleep-weekdays-end">End Time:</label>
+            <input type="time" id="time-sleep-weekdays-end">
+            
+            <h3>Weekends (Saturday - Sunday)</h3>
+            <label for="time-sleep-weekends-start">Start Time:</label>
+            <input type="time" id="time-sleep-weekends-start">
+            <label for="time-sleep-weekends-end">End Time:</label>
+            <input type="time" id="time-sleep-weekends-end">
+            <button id="button-sleep-times" class="button-sleep-times">Set Sleep Times</button>
+        </section>
+        
+        <section>
+            <h2>System Info</h2>
+            <div id="system-info" class="system-info">
+                <p id="sys-current-time">Local time: Loading...</p>
+                <p id="sys-system-uptime">Uptime: Loading...</p>
+                <p id="sys-cpu-temperature">CPU Temperature: Loading...</p>
+                <p id="sys-device-info">Device: Loading...</p>
+                <p>Page data refreshes every 2 seconds</p>
+                <p>Tree Control v2.0 (2024-11-18 at 16:38)</p>
+            </div>
+        </section>
+    </div>
+</body>
+<script src="script.js"></script>
+</html>

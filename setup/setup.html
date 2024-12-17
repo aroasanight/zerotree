@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup | Tree Control</title>
+    <link rel="stylesheet" href="style.css"> <!-- flask/web path -->
+    <link rel="stylesheet" href="../controlpanel/style.css"> <!-- webstorm preview -->
+</head>
+<body>
+    <div class="container">
+    <h1>Hardware setup</h1>
+    <ul>
+        <li>DO NOT power the Pi with a micro-usb cable. Use a proper power adapter. Mine is 12v 6a, and terminates in a barrel connector - which I've then split out into two cables which fit onto the Pi's GPIO pins. Connect power to a 5V GPIO pin, and ground to any groupd pin. Run "pinout" to see a graphic of which pins are which.</li>
+        <li>Connect the LEDs to the other 5V GPIO pin, another ground pin, and the data pin to GPIO 18.</li>
+        <li>Place two buttons on a breadboard. Connect one pin of each together - and then to ground (so one pin of each is grounded). Connect the other pin of each button to GPIO 17 and 27 respectively.</li>
+        <li>If you have a case fan, either split the 5V cable to the LEDs with the fan, or just connect it to a 3.3v pin.</li>
+    </ul>
+    <h1>Samba setup</h1>
+    <ul>
+        <li>Install samba with "sudo apt-get install samba".</li>
+        <li>Edit the config file using "sudo nano /etc/samba/smb.conf".</li>
+        <li>Under the "homes" share, set 'read only' to "no", and add the line "veto files = /._*/.DS_Store/".</li>
+        <li>Run "sudo smbpasswd -a username" to set the samba password.</li>
+        <li>Apply your changes with "sudo service smbd restart".</li>
+    </ul>
+    <h1>Coordinates setup</h1>
+    <ul>
+        <li>Connect a device to the samba share. We'll assume that the program is in the home directory, in a folder named "webserver_new".</li>
+        <li>Turn all lights off - and point the camera so that the tree fills as much of the frame as possible without any of the lights being out of frame. Position within the frame doesn't matter - it'll be corrected later.</li>
+        <li>On the connected device, run the "coordinate_finder_CAM.py" file, in the setup folder.</li>
+        <li>I suggest SSHing into the Pi on a different device for ease of use - but if you can't, do both in separate terminal tabs/windows.</li>
+        <li>On the pi, run "sudo python3 webserver_new/setup/coordinate_finder_LED.py".</li>
+        <li>Press the Enter key on the CAM script. It should spit out the coordinates for the first light, then wait for another input.</li>
+        <li>Press Enter on the LED script (on the pi) - the next LED should light up.</li>
+        <li>Repeat this until the CAM script has spat out the coordinates of ALL of your lights. Press the "e" key, followed by Enter on the CAM script, and it should spit out a "coordinates.json" file in the "setup" directory.</li>
+        <li>Move the coordinates.json file into the settings folder - replacing any existing coordinates if necessary.</li>
+    </ul>
+    <h1>Auto-running the service on boot</h1>
+    <ul>
+        <li>Run "sudo cp webserver_new/setup/flaskapp.service /etc/systemd/system/flaskapp.service"</li>
+        <li>Run "sudo systemctl daemon-reload"</li>
+        <li>If the program is already running - stop it.</li>
+        <li>Run "sudo systemctl enable flaskapp.service"</li>
+        <li>Run "sudo systemctl start flaskapp.service"</li>
+    </ul>
+    <h1>Maintenance</h1>
+    <ul>
+        <li>To view the logs of the python script, run "sudo journalctl -u flaskapp". These can get long very quickly - so note that typing a number will jump that many lines forwards (so 99999999 will likely take you to the end of the logs)</li>
+    </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+    "weekdays": {
+        "startTime": "21:00",
+        "endTime": "06:40"
+    },
+    "weekends": {
+        "startTime": "21:30",
+        "endTime": "08:00"
+    }
+}
