@@ -476,7 +476,6 @@ def spectrumVertical():
 
 #endregion
 #region MGRP christmas ROGB
-warmWhite = [255,140,70]
 
 def christmasTypical():
     for i in range(0,50):
@@ -692,7 +691,7 @@ def christmasTwinkle():
 
 #endregion
 #region MGRP christmas White
-warmWhite = [255,190,60]
+warmWhite = [255,160,40]
 
 def christmasWhiteTypical():
     pixels.fill((warmWhite[0],warmWhite[1],warmWhite[2]))
