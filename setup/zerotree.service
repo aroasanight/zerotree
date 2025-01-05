@@ -1,0 +1,13 @@
+[Unit]
+Description=zerotree
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/home/garlicbread/zerotree
+ExecStart=/usr/bin/sudo /usr/bin/python3 /home/garlicbread/zerotree/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

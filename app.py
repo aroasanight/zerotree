@@ -205,6 +205,17 @@ def solidPink():
     pixels.show()
     time.sleep(0.1)
 
+def solidPink2():
+    pixels.fill((255, 0, 140))
+    pixels.show()
+    time.sleep(1)
+    pixels.fill((5, 0, 140))
+    pixels.show()
+    time.sleep(1)
+    pixels.fill((255, 0, 10))
+    pixels.show()
+    time.sleep(1)
+
 
 #endregion
 #region MGRP test modes
@@ -847,14 +858,15 @@ modes = [
     ["Solid Colours", "Purple", LEDMode(solidPurple), False],
     ["Solid Colours", "Magenta", LEDMode(solidMagenta), False],
     ["Solid Colours", "Pink", LEDMode(solidPink), False],
+    ["Solid Colours", "Pink3", LEDMode(solidPink2), False],
     ["Test Modes", "Chase", LEDMode(rgbChase), False],
     ["Test Modes", "RGB cycle", LEDMode(cycleColours), False],
-    ["StandUpMaths", "Rotate", LEDMode(standUpRotate), False],
-    ["StandUpMaths Inspired", "BooCircle", LEDMode(booCircle), False],
-    ["StandUpMaths Inspired", "BooRadio Out", LEDMode(booRadioOut), False],
-    ["StandUpMaths Inspired", "BooRadio In", LEDMode(booRadioIn), False],
-    ["StandUpMaths Inspired", "BooSinBounce", LEDMode(booSinBounce), False],
-    ["StandUpMaths Inspired", "Game of life", LEDMode(gameOfLife), False],
+    ["SUM", "Rotate", LEDMode(standUpRotate), False],
+    ["SUM Insp", "BCircle", LEDMode(booCircle), False],
+    ["SUM Insp", "BRadio Out", LEDMode(booRadioOut), False],
+    ["SUM Insp", "BRadio In", LEDMode(booRadioIn), False],
+    ["SUM Insp", "BSinBounce", LEDMode(booSinBounce), False],
+    ["SUM Insp", "CGoL", LEDMode(gameOfLife), False],
     ["Static", "Rainbow across", LEDMode(spectrumHorizontal), False],
     ["Static", "Rainbow up", LEDMode(spectrumVertical), False],
     ["Christmas Typical (ROBG)", "Steady on", LEDMode(christmasTypical), True],
@@ -891,10 +903,6 @@ def serveJS():
 @app.route('/favicon.ico')
 def serveFavicon():
     return send_from_directory('.', 'controlpanel/favicon.ico')
-
-@app.route('/setup')
-def serveSetup():
-    return send_from_directory('.', 'setup/setup.html')
 
 
 #endregion
