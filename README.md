@@ -1,4 +1,5 @@
 # zerotree
+ python program to control neopixel christmas tree lights with a Pi Zero, web interface and Home Assistant support.
 
 # setup
 
