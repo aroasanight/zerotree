@@ -43,6 +43,10 @@ coordinates = [[281, 712], [198, 713], [164, 716], [111, 705], [57, 718], [72, 6
 # 21 - [189, 448]
 # avg - 170, 500
 
+customColor = {"r": 255, "g": 0, "b": 0}  # Default to red
+
+lastSleepState = False
+
 #endregion
 #region FUNCTIONS
 
@@ -107,6 +111,18 @@ def loadSelectedMode():
     except FileNotFoundError:
         saveSelectedMode()
 
+def saveCustomColor():
+    with open('settings/custom_color.json', 'w') as file:
+        json.dump(customColor, file)
+
+def loadCustomColor():
+    global customColor
+    try:
+        with open('settings/custom_color.json', 'r') as file:
+            customColor = json.load(file)
+    except FileNotFoundError:
+        saveCustomColor()
+
 #endregion
 #region MODES FUNCS
 
@@ -126,7 +142,7 @@ class LEDMode:
 
     def run(self):
         while self._running:
-            if (self._paused) or (not power) or (sleepTimeCheck()):
+            if (self._paused) or (not power):
                 time.sleep(0.1)
                 pixels.fill((0,0,0))
                 pixels.show()
@@ -148,6 +164,10 @@ def modeBreakCheck():
     elif not power: return(True)
     elif sleepTimeCheck(): return(True)
     else: return(False)
+
+# Helper function to get custom color tuple
+def getCustomColor():
+    return (customColor["r"], customColor["g"], customColor["b"])
 
 # --------------------------------- #
 # [        !!   MODES   !!        ] #
@@ -846,45 +866,212 @@ def christmasWhiteTwinkle():
 
 
 #endregion
-#region MODES LIST
-modes = [
-    ["Solid Colours", "Red", LEDMode(solidRed), False],
-    ["Solid Colours", "Orange", LEDMode(solidOrange), False],
-    ["Solid Colours", "Yellow", LEDMode(solidYellow), False],
-    ["Solid Colours", "Green", LEDMode(solidGreen), False],
-    ["Solid Colours", "Cyan", LEDMode(solidCyan), False],
-    ["Solid Colours", "Light blue", LEDMode(solidLightBlue), False],
-    ["Solid Colours", "Blue", LEDMode(solidBlue), False],
-    ["Solid Colours", "Purple", LEDMode(solidPurple), False],
-    ["Solid Colours", "Magenta", LEDMode(solidMagenta), False],
-    ["Solid Colours", "Pink", LEDMode(solidPink), False],
-    ["Solid Colours", "Pink3", LEDMode(solidPink2), False],
-    ["Test Modes", "Chase", LEDMode(rgbChase), False],
-    ["Test Modes", "RGB cycle", LEDMode(cycleColours), False],
-    ["SUM", "Rotate", LEDMode(standUpRotate), False],
-    ["SUM Insp", "BCircle", LEDMode(booCircle), False],
-    ["SUM Insp", "BRadio Out", LEDMode(booRadioOut), False],
-    ["SUM Insp", "BRadio In", LEDMode(booRadioIn), False],
-    ["SUM Insp", "BSinBounce", LEDMode(booSinBounce), False],
-    ["SUM Insp", "CGoL", LEDMode(gameOfLife), False],
-    ["Static", "Rainbow across", LEDMode(spectrumHorizontal), False],
-    ["Static", "Rainbow up", LEDMode(spectrumVertical), False],
-    ["Christmas Typical (ROBG)", "Steady on", LEDMode(christmasTypical), True],
-    ["Christmas Typical (ROBG)", "In waves", LEDMode(christmasInWaves), True],
-    ["Christmas Typical (ROBG)", "Sequential", LEDMode(christmasSequential), True],
-    ["Christmas Typical (ROBG)", "Slo go", LEDMode(christmasSloGo), True],
-    ["Christmas Typical (ROBG)", "Chasing/flash", LEDMode(christmasChasing), True],
-    ["Christmas Typical (ROBG)", "Slow fade", LEDMode(christmasSlowFade), True],
-    ["Christmas Typical (ROBG)", "Twinkle/flash", LEDMode(christmasTwinkle), True],
-    ["Christmas Typical (White)", "Steady on", LEDMode(christmasWhiteTypical), False],
-    ["Christmas Typical (White)", "In waves", LEDMode(christmasWhiteInWaves), False],
-    ["Christmas Typical (White)", "Sequential", LEDMode(christmasWhiteSequential), False],
-    ["Christmas Typical (White)", "Slo go", LEDMode(christmasWhiteSloGo), False],
-    ["Christmas Typical (White)", "Chasing/flash", LEDMode(christmasWhiteChasing), False],
-    ["Christmas Typical (White)", "Slow fade", LEDMode(christmasWhiteSlowFade), False],
-    ["Christmas Typical (White)", "Twinkle/flash", LEDMode(christmasWhiteTwinkle), False],
-]
+#region MGRP christmas White
 
+def customChristmasTypical():
+    custom_colour = getCustomColor()
+    pixels.fill((custom_colour[0],custom_colour[1],custom_colour[2]))
+    pixels.show()
+    time.sleep(0.1)
+
+def customChristmasInWaves():
+    for j in range(0,100):
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        for i in range(0,50):
+            if i%2 == 0:
+                pixels[i] = ((round((custom_colour[0]/150)*j),round((custom_colour[1]/150)*j),round((custom_colour[2]/150)*j)))
+            if i%2 == 1:
+                pixels[i] = ((round(custom_colour[0]-((custom_colour[0]/150)*j)),round(custom_colour[1]-((custom_colour[1]/150)*j)),round(custom_colour[2]-((custom_colour[2]/150)*j))))
+        pixels.show()
+    for j in range(100,0,-1):
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        for i in range(0,50):
+            if i%2 == 0:
+                pixels[i] = ((round((custom_colour[0]/150)*j),round((custom_colour[1]/150)*j),round((custom_colour[2]/150)*j)))
+            if i%2 == 1:
+                pixels[i] = ((round(custom_colour[0]-((custom_colour[0]/150)*j)),round(custom_colour[1]-((custom_colour[1]/150)*j)),round(custom_colour[2]-((custom_colour[2]/150)*j))))
+        pixels.show()
+
+def customChristmasSequential():
+    custom_colour = getCustomColor()
+    for i in range(0,50):
+        if i%2 == 0:
+            pixels[i] = ((custom_colour[0],custom_colour[1],custom_colour[2]))
+        if i%2 == 1:
+            pixels[i] = ((0,0,0))
+    pixels.show()
+    time.sleep(0.5)
+    for i in range(0,50):
+        if i%2 == 0:
+            pixels[i] = ((0,0,0))
+        if i%2 == 1:
+            pixels[i] = ((custom_colour[0],custom_colour[1],custom_colour[2]))
+    pixels.show()
+    time.sleep(0.5)
+
+def customChristmasSloGo():
+    for j in range(0,100):
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        for i in range(0,50):
+            if i%2 == 0:
+                pixels[i] = ((round((custom_colour[0]/150)*j),round((custom_colour[1]/150)*j),round((custom_colour[2]/150)*j)))
+            if i%2 == 1:
+                pixels[i] = ((round(custom_colour[0]-((custom_colour[0]/150)*j)),round(custom_colour[1]-((custom_colour[1]/150)*j)),round(custom_colour[2]-((custom_colour[2]/150)*j))))
+        pixels.show()
+        time.sleep(0.1)
+    for j in range(100,0,-1):
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        for i in range(0,50):
+            if i%2 == 0:
+                pixels[i] = ((round((custom_colour[0]/150)*j),round((custom_colour[1]/150)*j),round((custom_colour[2]/150)*j)))
+            if i%2 == 1:
+                pixels[i] = ((round(custom_colour[0]-((custom_colour[0]/150)*j)),round(custom_colour[1]-((custom_colour[1]/150)*j)),round(custom_colour[2]-((custom_colour[2]/150)*j))))
+        pixels.show()
+        time.sleep(0.1)
+
+def customChristmasChasing():
+    for j in range (0,3):
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        for i in range(0,50):
+            if i%2 == 0:
+                pixels[i] = ((custom_colour[0],custom_colour[1],custom_colour[2]))
+            if i%2 == 1:
+                pixels[i] = ((0,0,0))
+        pixels.show()
+        time.sleep(0.1)
+        pixels.fill((0,0,0))
+        pixels.show()
+        time.sleep(0.1)
+    for j in range (0,3):
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        for i in range(0,50):
+            if i%2 == 0:
+                pixels[i] = ((0,0,0))
+            if i%2 == 1:
+                pixels[i] = ((custom_colour[0],custom_colour[1],custom_colour[2]))
+        pixels.show()
+        time.sleep(0.1)
+        pixels.fill((0,0,0))
+        pixels.show()
+        time.sleep(0.1)
+    for j in range(0,2):
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        for i in range(0,50):
+            if i%2 == 0:
+                pixels[i] = ((custom_colour[0],custom_colour[1],custom_colour[2]))
+            if i%2 == 1:
+                pixels[i] = ((0,0,0))
+        pixels.show()
+        time.sleep(0.3)
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        for i in range(0,50):
+            if i%2 == 0:
+                pixels[i] = ((0,0,0))
+            if i%2 == 1:
+                pixels[i] = ((custom_colour[0],custom_colour[1],custom_colour[2]))
+        pixels.show()
+        time.sleep(0.3)
+
+def customChristmasSlowFade():
+    for j in range(0,100):
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        pixels.fill((round((custom_colour[0]/150)*j),round((custom_colour[1]/150)*j),round((custom_colour[2]/150)*j)))
+        pixels.show()
+        time.sleep(0.1)
+    for j in range(100,0,-1):
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        pixels.fill((round((custom_colour[0]/150)*j),round((custom_colour[1]/150)*j),round((custom_colour[2]/150)*j)))
+        pixels.show()
+        time.sleep(0.1)
+
+def customChristmasTwinkle():
+    for j in range (0,3):
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        for i in range(0,50):
+            if i%2 == 0:
+                pixels[i] = ((custom_colour[0],custom_colour[1],custom_colour[2]))
+            if i%2 == 1:
+                pixels[i] = ((0,0,0))
+        pixels.show()
+        time.sleep(0.1)
+        pixels.fill((0,0,0))
+        pixels.show()
+        time.sleep(0.1)
+    for j in range (0,3):
+        custom_colour = getCustomColor()
+        if modeBreakCheck(): break
+        for i in range(0,50):
+            if i%2 == 0:
+                pixels[i] = ((0,0,0))
+            if i%2 == 1:
+                pixels[i] = ((custom_colour[0],custom_colour[1],custom_colour[2]))
+        pixels.show()
+        time.sleep(0.1)
+        pixels.fill((0,0,0))
+        pixels.show()
+        time.sleep(0.1)
+
+
+#endregion
+#region MODES LIST
+
+# Mode structure: [Group, Name, LEDMode, ShowInPhysicalButton, ShowInHA, IsCustomColorMode]
+modes = [
+    ["Solid Colours", "Red", LEDMode(solidRed), False, False, False],
+    ["Solid Colours", "Orange", LEDMode(solidOrange), False, False, False],
+    ["Solid Colours", "Yellow", LEDMode(solidYellow), False, False, False],
+    ["Solid Colours", "Green", LEDMode(solidGreen), False, False, False],
+    ["Solid Colours", "Cyan", LEDMode(solidCyan), False, False, False],
+    ["Solid Colours", "Light blue", LEDMode(solidLightBlue), False, False, False],
+    ["Solid Colours", "Blue", LEDMode(solidBlue), False, False, False],
+    ["Solid Colours", "Purple", LEDMode(solidPurple), False, False, False],
+    ["Solid Colours", "Magenta", LEDMode(solidMagenta), False, False, False],
+    ["Solid Colours", "Pink", LEDMode(solidPink), False, False, False],
+    ["Solid Colours", "Pink3", LEDMode(solidPink2), False, False, False],
+    ["Test Modes", "Chase", LEDMode(rgbChase), False, False, False],
+    ["Test Modes", "RGB cycle", LEDMode(cycleColours), False, False, False],
+    ["SUM", "Rotate", LEDMode(standUpRotate), False, True, False],
+    ["SUM Insp", "BCircle", LEDMode(booCircle), False, True, False],
+    ["SUM Insp", "BRadio Out", LEDMode(booRadioOut), False, True, False],
+    ["SUM Insp", "BRadio In", LEDMode(booRadioIn), False, True, False],
+    ["SUM Insp", "BSinBounce", LEDMode(booSinBounce), False, True, False],
+    ["SUM Insp", "CGoL", LEDMode(gameOfLife), False, True, False],
+    ["Static", "Rainbow across", LEDMode(spectrumHorizontal), False, True, False],
+    ["Static", "Rainbow up", LEDMode(spectrumVertical), False, True, False],
+    ["Christmas Typical (ROGB)", "Steady on", LEDMode(christmasTypical), True, True, False],
+    ["Christmas Typical (ROGB)", "In waves", LEDMode(christmasInWaves), True, True, False],
+    ["Christmas Typical (ROGB)", "Sequential", LEDMode(christmasSequential), True, True, False],
+    ["Christmas Typical (ROGB)", "Slo go", LEDMode(christmasSloGo), True, True, False],
+    ["Christmas Typical (ROGB)", "Chasing/flash", LEDMode(christmasChasing), True, True, False],
+    ["Christmas Typical (ROGB)", "Slow fade", LEDMode(christmasSlowFade), True, True, False],
+    ["Christmas Typical (ROGB)", "Twinkle/flash", LEDMode(christmasTwinkle), True, True, False],
+    ["Christmas Typical (White)", "Steady on", LEDMode(christmasWhiteTypical), False, False, False],
+    ["Christmas Typical (White)", "In waves", LEDMode(christmasWhiteInWaves), False, False, False],
+    ["Christmas Typical (White)", "Sequential", LEDMode(christmasWhiteSequential), False, False, False],
+    ["Christmas Typical (White)", "Slo go", LEDMode(christmasWhiteSloGo), False, False, False],
+    ["Christmas Typical (White)", "Chasing/flash", LEDMode(christmasWhiteChasing), False, False, False],
+    ["Christmas Typical (White)", "Slow fade", LEDMode(christmasWhiteSlowFade), False, False, False],
+    ["Christmas Typical (White)", "Twinkle/flash", LEDMode(christmasWhiteTwinkle), False, False, False],
+    # NEW: Custom color modes for HA
+    ["Christmas Custom", "HASteady on", LEDMode(customChristmasTypical), False, True, True],
+    ["Christmas Custom", "HAIn waves", LEDMode(customChristmasInWaves), False, True, True],
+    ["Christmas Custom", "HASequential", LEDMode(customChristmasSequential), False, True, True],
+    ["Christmas Custom", "HASlo go", LEDMode(customChristmasSloGo), False, True, True],
+    ["Christmas Custom", "HAChasing/flash", LEDMode(customChristmasChasing), False, True, True],
+    ["Christmas Custom", "HASlow fade", LEDMode(customChristmasSlowFade), False, True, True],
+    ["Christmas Custom", "HATwinkle/flash", LEDMode(customChristmasTwinkle), False, True, True],
+]
 
 #endregion
 #region ROUTES files
@@ -909,15 +1096,12 @@ def serveFavicon():
 #region ROUTES home assistant
 @app.route('/api/ha/post/toggle-power', methods=['POST'])
 def postHATogglePower():
-    if not sleepTimeCheck():
-        global power
-        power = not power
-        if not power:
-            pixels.fill((0, 0, 0))
-            pixels.show()
-        return jsonify({"power": power})
-    else:
-        return jsonify({"power": False})
+    global power
+    power = not power
+    if not power:
+        pixels.fill((0, 0, 0))
+        pixels.show()
+    return jsonify({"power": power})
 
 # home assistant 0-255 range instead of 0-100
 @app.route('/api/ha/post/new-brightness', methods=['POST'])
@@ -929,34 +1113,98 @@ def postHASetBrightness():
     pixels.show()
     return jsonify({"brightness": tempBrightness})
 
+@app.route('/api/ha/post/new-color', methods=['POST'])
+def postHASetColor():
+    global customColor
+    r = max(0, min(255, int(request.json.get("r", 255))))
+    g = max(0, min(255, int(request.json.get("g", 0))))
+    b = max(0, min(255, int(request.json.get("b", 0))))
+    
+    customColor = {"r": r, "g": g, "b": b}
+    saveCustomColor()
+    
+    return jsonify(customColor)
+
+# NEW: Set mode from HA (using mode index or effect name)
+@app.route('/api/ha/post/new-mode', methods=['POST'])
+def postHASetMode():
+    global selectedMode
+    global power
+    
+    try:
+        # Support both index and effect name
+        modeValue = request.json.get("mode")
+        
+        if isinstance(modeValue, int):
+            selectedValue = modeValue
+        else:
+            # Find mode by name
+            selectedValue = None
+            for index, mode in enumerate(modes):
+                if mode[4] and mode[1] == modeValue:  # mode[4] is ShowInHA
+                    selectedValue = index
+                    break
+            
+            if selectedValue is None:
+                return jsonify({"error": "Mode not found"}), 400
+        
+        if 0 <= selectedValue < len(modes) and modes[selectedValue][4]:
+            toggleNow = power
+            if toggleNow: power = False
+            for mode in modes: mode[2].stop()
+            selectedMode = selectedValue
+            modes[selectedMode][2].start()
+            if toggleNow: power = True
+            saveSelectedMode()
+            return jsonify({
+                "selected": selectedMode,
+                "mode": modes[selectedMode][1],
+                "isCustomColor": modes[selectedMode][5]
+            })
+        else:
+            return jsonify({"error": "Invalid mode"}), 400
+            
+    except (ValueError, KeyError) as e:
+        return jsonify({"error": str(e)}), 400
+
 @app.route('/api/ha/get/modes', methods=['GET'])
 def getHAModes():
-    newModes = ""
-    for index, mode in enumerate(modes): 
-        if mode[3]:
-            newModes += f"{str(index)} - {mode[1]}|"
-    newModes = str(newModes[:-1])
+    # Return only modes that should show in HA (mode[4] == True)
+    haModes = []
+    for index, mode in enumerate(modes):
+        if mode[4]:  # ShowInHA
+            haModes.append({
+                "index": index,
+                "group": mode[0],
+                "name": mode[1],
+                "isCustomColor": mode[5]
+            })
+    
+    # Also return as pipe-separated string for backwards compatibility
+    modesString = "|".join([f"{m['index']} - {m['name']}" for m in haModes])
+    
     return jsonify({
-        "dummy": 0,
-        "modes": newModes,
-        "zdummy": 0
+        "modes": haModes,
+        "modesString": modesString,
+        "effectList": [m['name'] for m in haModes]
     })
 
 # settings for home assistant since it doesn't need sleep times, and needs brightness in 0-255 instead of 0-100 like a normal person
 @app.route('/api/ha/get/settings', methods=['GET'])
 def getHASettings():
     currentModeDescription = str(modes[selectedMode][1])
-    if sleepTimeCheck():
-        powerNew = False
-    else:
-        powerNew = power
+    isCustomColorMode = modes[selectedMode][5]
+    
     return jsonify({
         "selectedMode": interruptMode,
         "currentModeDescription": currentModeDescription,
         "HAMode": str(f"{interruptMode} - {currentModeDescription}"),
         "brightness": max(min(round(tempBrightness * 255), 255), 0),
-        "power": powerNew,
-        "isSleeping": sleepTimeCheck()
+        "power": power,
+        "isSleeping": sleepTimeCheck(),
+        "customColor": customColor,
+        "isCustomColorMode": isCustomColorMode,
+        "effect": currentModeDescription
     })
 
 
@@ -1015,7 +1263,7 @@ def postSetMode():
     try:
         selectedValue = int(request.json.get("selected", 0))
         if 0 <= selectedValue and selectedValue < len(modes):
-            if power: toggleNow = True
+            toggleNow = power
             if toggleNow: power = False
             for mode in modes: mode[2].stop() # stop all modes
             selectedMode = selectedValue
@@ -1044,7 +1292,8 @@ def getSettings():
         "currentModeDescription": currentModeDescription,
         "brightness": int(tempBrightness * 100),
         "sleepTimes": sleepTimes,
-        "power": power
+        "power": power,
+        "customColor": customColor
     })
 
 @app.route('/api/get/system-info', methods=['GET'])
@@ -1068,8 +1317,6 @@ def getSystemInfo():
         'device': f"{hostname} ({osInfo})",
         'currentTime': currentTime
     })
-
-
 
 
 #endregion
@@ -1102,7 +1349,7 @@ def buttonPolling():
             while newMode != selectedMode:
                 if newMode in cyclableModes:
                     selectedMode = newMode
-                    if power: toggleNow = True
+                    toggleNow = power
                     if toggleNow: power = False
                     for mode in modes: mode[2].stop() # stop all modes
                     selectedMode = newMode
@@ -1115,19 +1362,45 @@ def buttonPolling():
                 else:
                     newMode += 1
 
-
         powerButtonPrevious = powerButtonCurrent
         modeButtonPrevious = modeButtonCurrent
 
         time.sleep(0.05)
+
+def sleepTimerMonitoring():
+    global power
+    global lastSleepState
+    
+    while True:
+        currentSleepState = sleepTimeCheck()
+        
+        # Entering sleep period - turn off
+        if currentSleepState and not lastSleepState:
+            if power:  # Only turn off if currently on
+                power = False
+                pixels.fill((0, 0, 0))
+                pixels.show()
+                print("Sleep timer: Turning off")
+        
+        # Exiting sleep period - turn on
+        elif not currentSleepState and lastSleepState:
+            if not power:  # Only turn on if currently off
+                power = True
+                print("Sleep timer: Turning on")
+        
+        lastSleepState = currentSleepState
+        time.sleep(60)  # Check every minute
 
 
 #endregion
 #region init
 loadSleepTimes()
 loadSelectedMode()
+loadCustomColor()
 pollingThread = threading.Thread(target=buttonPolling, daemon=True)
 pollingThread.start()
+sleepTimerThread = threading.Thread(target=sleepTimerMonitoring, daemon=True)
+sleepTimerThread.start()
 modes[selectedMode][2].start()
 
 
